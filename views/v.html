@@ -39,22 +39,17 @@
 <body>
 <div id="floating-panel">
     <b>Start: </b>
-    <select id="start">
-        <option value="penn station, new york, ny">Penn Station</option>
-        <option value="grand central station, new york, ny">Grand Central Station</option>
-        <option value="625 8th Avenue, New York, NY, 10018">Port Authority Bus Terminal</option>
-        <option value="staten island ferry terminal, new york, ny">Staten Island Ferry Terminal</option>
-        <option value="101 E 125th Street, New York, NY">Harlem - 125th St Station</option>
-    </select>
+    <input id="start" type="text" placeholder="start" value="Rruga barrikadave"/>
     <b>End: </b>
-    <select id="end">
-        <option value="260 Broadway New York NY 10007">City Hall</option>
-        <option value="W 49th St & 5th Ave, New York, NY 10020">Rockefeller Center</option>
-        <option value="moma, New York, NY">MOMA</option>
-        <option value="350 5th Ave, New York, NY, 10118">Empire State Building</option>
-        <option value="253 West 125th Street, New York, NY">Apollo Theater</option>
-        <option value="1 Wall St, New York, NY">Wall St</option>
-    </select>
+    <input id="end" type="end" placeholder="end" value="Qyteti studenti"/>
+    <div id="">
+        <select id="mode" onchange="initMap()">
+            <option value="DRIVING">Driving</option>
+            <option value="WALKING">Walking</option>
+            <option value="BICYCLING">Bicycling</option>
+            <option value="TRANSIT">Transit</option>
+        </select>
+    </div>
 </div>
 <div id="map"></div>
 &nbsp;
@@ -100,9 +95,9 @@
         // Retrieve the start and end locations and create a DirectionsRequest using
         // WALKING directions.
         directionsService.route({
-            origin: document.getElementById('start').value,
-            destination: document.getElementById('end').value,
-            travelMode: 'WALKING'
+            origin: ((document.getElementById('start').value == null) ? 'Tirana, Albania' : document.getElementById('start').value),
+            destination: ((document.getElementById('end').value == null) ? 'Tirana, Albania' : document.getElementById('end').value),
+            travelMode: document.getElementById("mode").value
         }, function(response, status) {
             // Route the directions and pass the response to a function to create
             // markers for each step.
@@ -112,7 +107,7 @@
                 directionsDisplay.setDirections(response);
                 showSteps(response, markerArray, stepDisplay, map);
             } else {
-                window.alert('Directions request failed due to ' + status);
+                //window.alert('Directions request failed due to ' + status);
             }
         });
     }
