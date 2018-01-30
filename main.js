@@ -7,6 +7,10 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var buses = require('./routes/bus');
+
+var bodyParser = require('body-parser');
+var urlencodedParser = bodyParser.urlencoded({ extended: true });
 
 var app = express();
 
@@ -25,6 +29,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/bus', buses);
+
+
+app.post('/bus/add', urlencodedParser, function (req, res){
+    var reply='';
+    reply += "Bus name : " + req.body.name + "<br/>";
+    reply += "Bus lat is : " + req.body.latitude + "<br/>";
+    reply += "Bus long is : " + req.body.longitude + "<br/>";
+    res.send(reply);
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -32,6 +47,7 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -43,5 +59,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;
