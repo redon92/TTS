@@ -4,12 +4,22 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mysql = require('mysql');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 var buses = require('./routes/bus');
 
 var bodyParser = require('body-parser');
+
+var connection = mysql.createConnection({
+    host     : 'aa1ol8w73u28tg5.cwvansxp4w1s.eu-central-1.rds.amazonaws.com',
+    user     : 'klevinism',
+    password : 'Klklkl007',
+    database : 'ebdb',
+    port     : 3306
+});
+
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
 
 var app = express();
@@ -34,6 +44,16 @@ app.use('/bus', buses);
 
 app.post('/bus/add', urlencodedParser, function (req, res){
     var reply='';
+
+    connection.connect(function(err) {
+        if (err) throw err;
+        var sql = "INSERT INTO bus (Name, Lat, Lon) VALUES ('"+req.body.name+"', '"+req.body.latitude+"','"+req.body.longitude+"')";
+        connection.query(sql, function (err, result) {
+            if (err) throw err;
+            console.log("1 record inserted ");
+        });
+    });
+
     reply += "Bus name : " + req.body.name + "<br/>";
     reply += "Bus lat is : " + req.body.latitude + "<br/>";
     reply += "Bus long is : " + req.body.longitude + "<br/>";
@@ -50,6 +70,7 @@ app.use(function(req, res, next) {
 
 
 // error handler
+/*
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -58,7 +79,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
-
+});*/
 
 module.exports = app;
