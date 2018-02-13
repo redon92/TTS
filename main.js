@@ -12,13 +12,6 @@ var buses = require('./routes/bus');
 
 var bodyParser = require('body-parser');
 
-var connection = mysql.createConnection({
-    host     : 'aa1ol8w73u28tg5.cwvansxp4w1s.eu-central-1.rds.amazonaws.com',
-    user     : 'klevinism',
-    password : 'Klklkl007',
-    database : 'ebdb',
-    port     : 3306
-});
 
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
 
@@ -38,10 +31,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('', index);
 app.use('/users', users);
 app.use('/bus', buses);
 
-
+var connection = mysql.createConnection({
+    host     : 'aa1ol8w73u28tg5.cwvansxp4w1s.eu-central-1.rds.amazonaws.com',
+    user     : 'klevinism',
+    password : 'Klklkl007',
+    database : 'ebdb',
+    port     : 3306
+});
 app.post('/bus/add', urlencodedParser, function (req, res){
     var reply='';
 
@@ -57,6 +57,7 @@ app.post('/bus/add', urlencodedParser, function (req, res){
     reply += "Bus name : " + req.body.name + "<br/>";
     reply += "Bus lat is : " + req.body.latitude + "<br/>";
     reply += "Bus long is : " + req.body.longitude + "<br/>";
+    reply += "<a href='/'> <<<< Go To Map </a> <br/>";
     res.send(reply);
 });
 

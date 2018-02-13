@@ -10,20 +10,18 @@ var connection = mysql.createConnection({
 });
 var data = {};
 
-connection.connect();
-connection.query('SELECT * FROM bus', function (err, rows, fields) {
-    if (err) throw err;
-    data = rows;
-    console.log(data);
-});
-connection.end();
-
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log(data);
 
-    res.render('main', {'data': data});
+    connection.query('SELECT * FROM bus', function (err, rows, fields) {
+        if (err) throw err;
+        else {
+            data = rows;
+            res.render('main', {'data': data});
+        }
+        console.log(data);
+
+    });
 });
 
 module.exports = router;
