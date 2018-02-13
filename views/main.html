@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Directions service (complex)</title>
+    <title>{{title}}</title>
     <style>
         /* Always set the map height explicitly to define the size of the div
          * element that contains the map. */
@@ -17,6 +17,7 @@
             padding: 0;
         }
         #floating-panel {
+            width: 30%;
             position: absolute;
             top: 10px;
             left: 25%;
@@ -29,30 +30,46 @@
             line-height: 30px;
             padding-left: 10px;
         }
+        #menu{
+            float: right;
+            width: 50%;
+        }
+        #mapSettings{
+            float: left;
+        }
         #warnings-panel {
             width: 100%;
             height:10%;
             text-align: center;
         }
-    </style>
+
+        </style>
+    <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
+
 <div id="floating-panel">
-    <b>Start: </b>
-    <input id="start" type="text" placeholder="start" value="Rruga barrikadave"/>
-    <b>End: </b>
-    <input id="end" type="end" placeholder="end" value="Qyteti studenti"/>
-    <div id="">
+    <div id="mapSettings">
+        <b>Start: </b>
+        <input id="start" type="text" placeholder="start" value=""/>
+        <br/>
+        <b>End: </b>
+        <input id="end" type="end" placeholder="end" value=""/>
+        <br/>
+        <b>Mode:</b>
         <select id="mode" onchange="initMap()">
-            <option value="DRIVING">Driving</option>
-            <option value="WALKING">Walking</option>
-            <option value="BICYCLING">Bicycling</option>
-            <option value="TRANSIT">Transit</option>
+                <option value="DRIVING">Driving</option>
+                <option value="WALKING">Walking</option>
+                <option value="BICYCLING">Bicycling</option>
+                <option value="TRANSIT">Transit</option>
         </select>
+    </div>
+    <div id="menu">
+        <a href="/bus" class="button blue">Add Bus</a>
     </div>
 </div>
 <div id="map"></div>
-&nbsp;
+
 <div id="warnings-panel"></div>
 <script>
     function initMap() {
@@ -63,7 +80,7 @@
 
         // Create a map and center it on Manhattan.
         var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 13,
+            zoom: 1,
             center: {lat: 40.771, lng: -73.974}
         });
 
@@ -91,6 +108,7 @@
         for (var i = 0; i < markerArray.length; i++) {
             markerArray[i].setMap(null);
         }
+        console.log('adadadsads  -1 ');
 
         // Retrieve the start and end locations and create a DirectionsRequest using
         // WALKING directions.
@@ -101,26 +119,50 @@
         }, function(response, status) {
             // Route the directions and pass the response to a function to create
             // markers for each step.
+            addMarkers(response, markerArray, stepDisplay, map);
             if (status === 'OK') {
+                console.log('adadadsads 0 ');
+
                 document.getElementById('warnings-panel').innerHTML =
                     '<b>' + response.routes[0].warnings + '</b>';
                 directionsDisplay.setDirections(response);
-                showSteps(response, markerArray, stepDisplay, map);
+                //showSteps(response, markerArray, stepDisplay, map);
+                //addMarkers(response, markerArray, stepDisplay, map);
             } else {
                 //window.alert('Directions request failed due to ' + status);
             }
+
         });
     }
 
+    function addMarkers(directionResult, markerArray, stepDisplay, map){
+        var allMarkers = <%-JSON.stringify(data) %>;
+
+        var image = "/images/bus-pointer.png";
+        for (var i = 0; i < allMarkers.length; i++) {
+            var singleMark = new google.maps.LatLng(allMarkers[i].Lat, allMarkers[i].Lng);
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(allMarkers[i].Lat, allMarkers[i].Lng),
+                map: map,
+                title: allMarkers[i].Name,
+                icon: image
+            });
+            marker.setMap(map);
+            //marker.setPosition({lat: 40.771, lng: -73.974});//JSON.parse(singleMark));
+        }
+    }
+
     function showSteps(directionResult, markerArray, stepDisplay, map) {
-        // For each step, place a marker, and add the text to the marker's infowindow.
-        // Also attach the marker to an array so we can keep track of it and remove it
-        // when calculating new routes.
+        var allMarkers = <%-JSON.stringify(data) %>;
+
         var myRoute = directionResult.routes[0].legs[0];
-        for (var i = 0; i < myRoute.steps.length; i++) {
+        for (var i = 0; i < allMarkers.length; i++) {
+            var singleMark = '{"lat":'+allMarkers[i].Lat+',"lng":'+allMarkers[i].Lng+'}';
             var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
             marker.setMap(map);
-            marker.setPosition(myRoute.steps[i].start_location);
+            marker.setPosition({lat: 40.771, lng: -73.974});//JSON.parse(singleMark));
+
+            console.log("MArk added --> "+JSON.parse(singleMark) + " wtf ");
             attachInstructionText(
                 stepDisplay, marker, myRoute.steps[i].instructions, map);
         }
