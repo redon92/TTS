@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 
 var index = require('./routes/index');
+var index2 = require('./routes/index2');
 var users = require('./routes/users');
 var buses = require('./routes/bus');
 
@@ -34,6 +35,8 @@ app.use('/', index);
 app.use('', index);
 app.use('/users', users);
 app.use('/bus', buses);
+app.use('/index2', index2);
+
 
 var connection = mysql.createConnection({
     host     : 'aa1ol8w73u28tg5.cwvansxp4w1s.eu-central-1.rds.amazonaws.com',
